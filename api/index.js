@@ -5,7 +5,10 @@ const { default: mongoose } = require('mongoose');
 const User = require('./models/User');
 require('dotenv').config()
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+
 const bcryptSalt = bcrypt.genSaltSync(10);
+const jwtSecret = 'jweniubhvhhyvbyubybwciunc';
 
 app.use(express.json());
 
@@ -17,7 +20,7 @@ app.use(cors({
 
 const port = process.env.PORT || 3000;
 
-console.log(process.env.MONGO_URL)
+//console.log(process.env.MONGO_URL)
 mongoose.connect(process.env.MONGO_URL)
 
 app.get('/test',(req,res)=>{
@@ -45,10 +48,20 @@ app.post('/login',async(req,res)=>{
     const {email,password}=req.body 
     const emailDoc = await User.findOne({email})
     if(emailDoc){
-        res.json('found')
+        const passok = bcrypt.compareSync(password,emailDoc.password)
+        if(passok){
+            jwt.sign({email:emailDoc.email, id:emailDoc._id}, jwtSecret ,{}, (err,token)=>{
+                if (err) throw err;   
+                res.cookie('token', token).json('password ok'); 
+            })
+            
+        }
+        else{
+            res.status(422).json('password wrong');
+        }
     }
     else{
-        res.json('not found')
+        res.json('email ID not found')
     }
 })
 

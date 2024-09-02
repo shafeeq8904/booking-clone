@@ -9,12 +9,10 @@ export default function Login(){
     async function handlelogin(ev){
         ev.preventDefault()
         try {
-            await axios.post('/login',{
-                email,
-                password
-            })
-            
-        } catch (error) {
+            await axios.post('/login',{ email,password});
+            alert('Login Successfull')
+        } catch (error) 
+        {
             alert('login failed invalid credentials')
         }
     
