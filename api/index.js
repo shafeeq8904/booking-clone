@@ -21,7 +21,17 @@ app.use(cors({
 const port = process.env.PORT || 3000;
 
 //console.log(process.env.MONGO_URL)
-mongoose.connect(process.env.MONGO_URL)
+async function connectDB() {
+    try {
+        await mongoose.connect(process.env.MONGO_URL);
+        console.log('Connected to MongoDB');
+    } catch (error) {
+        console.error('Error connecting to MongoDB:', error.message);
+        process.exit(1); // Exit the process with a failure code
+    }
+}
+
+connectDB();
 
 app.get('/test',(req,res)=>{
     res.json('Hello World')
@@ -52,7 +62,7 @@ app.post('/login',async(req,res)=>{
         if(passok){
             jwt.sign({email:emailDoc.email, id:emailDoc._id}, jwtSecret ,{}, (err,token)=>{
                 if (err) throw err;   
-                res.cookie('token', token).json('password ok'); 
+                res.cookie('token', token).json(emailDoc); 
             })
             
         }
