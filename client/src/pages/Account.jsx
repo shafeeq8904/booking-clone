@@ -1,12 +1,24 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { UserContext } from "../UserContext";
 import { Link, Navigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 export default function Account() {
-    const { ready,user } = useContext(UserContext);
+    const [redirect , setRedirect] = useState(false);
+    const { ready,user , setUser } = useContext(UserContext);
     let {subpage}  =  useParams()
     if(subpage === undefined){
         subpage='profile'
+    }
+
+    async function logout(){
+        try {
+            await axios.post('/logout');
+            setUser(null);
+            setRedirect('/');
+        } catch (error) {
+            res.json("Failed to logout ")
+        }
     }
 
     if(!ready){
@@ -14,7 +26,7 @@ export default function Account() {
     }
 
     // Check if user exists before trying  to access user.name
-    if (ready && !user) {
+    if (ready && !user && !redirect) {
         return <Navigate to={'/login'}/>
 
     }
@@ -29,6 +41,10 @@ export default function Account() {
 
     console.log(subpage)
 
+    if(redirect){
+        return <Navigate to={redirect} />
+    }
+
     return (
         <div>
 
@@ -41,7 +57,7 @@ export default function Account() {
             subpage==='profile' && (
                 <div className="text-center max-w-lg mx-auto">
                     The Logged in user {user.name} with ({user.email})<br/>
-                    <button className="primary mt-6 max-w-sm mx-auto">Logout</button>
+                    <button onClick={logout} className="primary mt-6 max-w-sm mx-auto">Logout</button>
 
                 </div>
             )

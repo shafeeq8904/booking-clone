@@ -92,6 +92,10 @@ app.get('/profile',(req,res)=>{
     }
 })
 
+app.post('/logout',(req,res)=>{
+    res.cookie('token','').json(true);
+})
+
 app.listen( port , ()=>{
     console.log(`Server is running on port ${port}`)
 })
