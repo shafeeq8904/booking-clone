@@ -17,6 +17,10 @@ export default function Register(){
             password
         });
         alert('Registration Sucessful')
+        setname('')
+        setemail('')
+        setpassword('');
+        
         } catch (error) {
             alert('Registration Failed Please try again')
         }
