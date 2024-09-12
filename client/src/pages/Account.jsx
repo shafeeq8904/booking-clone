@@ -43,7 +43,7 @@ export default function Account() {
         return classes;
     }
 
-    console.log(subpage)
+
 
     if(redirect){
         return <Navigate to={redirect} />
