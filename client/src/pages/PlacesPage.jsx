@@ -36,9 +36,16 @@ export default function PlacesPage(){
     }
     async function AddPhotoLink(ev){
         ev.preventDefault()
-        await axios.post('/upload-by-link',{link:photoLink})
-    
+        const {data:filename} = await axios.post('/upload-by-link',{link:photoLink})
+        setAddedPhotos(prev=>{return [...prev ,filename]})
+        setPhotoLink('');
     }
+    function uploadphoto(ev){
+        ev.preventDefault();
+        const files = ev.target.files
+        console.log({files})
+    }
+
     return (
     <div> 
 
@@ -71,12 +78,18 @@ export default function PlacesPage(){
                 </div>
         
                 <div className="mt-2 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    <button className="flex justify-center items-center min-w-[150px] border bg-transparent rounded-2xl py-4 px-6 text-xl text-gray-500 gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
+                    {addedPhotos.length > 0 && addedPhotos.map (link => (
+                        <div >
+                            <img className="rounded-2xl h-32 w-full" src={'http://localhost:3000/uploads/'+ link} />
+                        </div>
+                    ))}
+                    <label className="cursor-pointer flex justify-center items-center min-w-[150px] border bg-transparent rounded-2xl py-4 px-6 text-sm text-gray-500 gap-2">
+                        <input type="file" className="hidden" onChange={uploadphoto}/>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                             <path fillRule="evenodd" d="M11.47 2.47a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06l-3.22-3.22V16.5a.75.75 0 0 1-1.5 0V4.81L8.03 8.03a.75.75 0 0 1-1.06-1.06l4.5-4.5ZM3 15.75a.75.75 0 0 1 .75.75v2.25a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5V16.5a.75.75 0 0 1 1.5 0v2.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V16.5a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
                          </svg>
-                        Upload
-                    </button>
+                        Upload from device
+                    </label>
                 </div>
 
                 {preInput('Description','Description of place')}
