@@ -10,6 +10,9 @@ const cookieParser = require('cookie-parser')
 const bcryptSalt = bcrypt.genSaltSync(10);
 const imageDownloader = require('image-downloader');
 const jwtSecret = 'jweniubhvhhyvbyubybwciunc';
+const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
 
 app.use(express.json());
 app.use(cookieParser());
@@ -106,6 +109,26 @@ app.post('/upload-by-link', async (req,res)=>{
         dest: __dirname + '/uploads/' +newName,
     });
     res.json(newName)
+})
+
+const photosMiddleware = multer({dest:'uploads/'});
+app.post('/upload' , photosMiddleware.array('photos',100), (req,res) =>{
+    const uploadedFiles = [];
+    for(let i =0;i<req.files.length;i++){
+        const {path,originalname} = req.files[i];
+        const parts = originalname.split('.');
+        const ext = parts[parts.length -1];
+        const newPath = path + '.' + ext;
+         // Rename the file
+         fs.renameSync(path, newPath);
+        
+         // Normalize the path to use forward slashes for consistency
+         const normalizedPath = newPath.replace(/\\/g, '/');
+         
+         uploadedFiles.push(normalizedPath.replace('uploads/', ''));
+        
+    }
+    res.json(uploadedFiles);
 })
 
 app.listen( port , ()=>{
