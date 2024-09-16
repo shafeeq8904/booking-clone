@@ -3,6 +3,7 @@ const app = express()
 const cors= require('cors');
 const { default: mongoose } = require('mongoose');
 const User = require('./models/User');
+const Place = require('./models/Places')
 require('dotenv').config()
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
@@ -129,6 +130,22 @@ app.post('/upload' , photosMiddleware.array('photos',100), (req,res) =>{
         
     }
     res.json(uploadedFiles);
+})
+
+app.post('/places', (req,res)=>{
+    const {token} = req.cookies;
+    const {title,address,addedPhotos,description
+        ,perks,extraInfo,checkin,checkout,maxGuests} = req.body
+    jwt.verify(token, jwtSecret , {}, async (err,userData)=>{
+        if (err) throw err;
+        const placeDoc = await Place.create({
+            owner : userData.id,
+            title,address,photos: addedPhotos,description
+            ,perks,extraInfo,checkin,checkout,maxGuests
+        });
+        res.json(placeDoc);
+    })
+   
 })
 
 app.listen( port , ()=>{
