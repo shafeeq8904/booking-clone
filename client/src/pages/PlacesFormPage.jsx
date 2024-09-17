@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Perks } from "../components/Perks";
 import PhotoUploader from "./PhotoUploader";
 import axios from "axios";
 import AccountNav from "./AccountNav";
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
 export default function PLacesFormPage(){
+    const {id} = useParams();
     const [title,setTitle]= useState('');
     const [address,setAddress] = useState('');
     const [addedPhotos,setAddedPhotos] = useState([]);
@@ -17,6 +18,24 @@ export default function PLacesFormPage(){
     const [maxGuests , setMaxGuests] = useState(1); 
     const [redirect, setRedirect] = useState(false);
      
+    useEffect(()=>{
+        if(!id){
+            return;
+        }
+        axios.get('/places/'+id).then(response =>{
+            const {data} = response; 
+            setTitle(data.title);
+            setAddress(data.address);
+            setAddedPhotos(data.photos);
+            setDescription(data.description);
+            setPerks(data.perks);
+            setExtraInfo(data.extraInfo);
+            setCheckin(data.checkin);
+            setCheckout(data.checkout);
+            setMaxGuests(data.maxGuests);
+        })
+    },[id])
+
     function inputHeader(text){
         return(
             <h2 className="text-2xl mt-4">{text}</h2>
@@ -36,14 +55,26 @@ export default function PLacesFormPage(){
         )
     }
 
-    async function addNewPlace(ev){
+    async function savePlace(ev){
         ev.preventDefault();
-        await axios.post('/places',{
-            title,address,addedPhotos,description
-            ,perks,extraInfo,checkin,checkout,maxGuests
-        });
-        setRedirect(true);
+        const placeData = {
+             title,address,addedPhotos,description
+            ,perks,extraInfo,checkin,checkout,maxGuests}
+        if(id){
+                //updating the existing place
+                await axios.put('/places/'+id,{
+                    id,...placeData
+                });
+                setRedirect(true);
+            }
+        else{
+            await axios.post('/places',{
+                placeData
+            });
+            setRedirect(true);
+        }
     }
+        
 
     if (redirect){
         return <Navigate to={'/account/places'} />
@@ -52,7 +83,7 @@ export default function PLacesFormPage(){
     return (
         <div className="flex flex-col justify-center items-center min-h-screen"> {/* Center the form */}
             <AccountNav/>
-            <form className="bg-white p-6 rounded-lg shadow-xl w-full max-w-xl mt-4" onSubmit={addNewPlace}> {/* Center and size the form */}
+            <form className="bg-white p-6 rounded-lg shadow-xl w-full max-w-4xl mt-4" onSubmit={savePlace}> {/* Center and size the form */}
                 {preInput('Title','Title for your place, should be short and catchy.')}
                 <input className="w-full p-4 mt-2 border rounded-lg" type='text' value={title} onChange={ev => setTitle(ev.target.value)} placeholder="title, for example: My lovely apartment"/> {/* Increased input size */}
 
