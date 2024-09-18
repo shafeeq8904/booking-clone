@@ -17,6 +17,7 @@ export default function PLacesFormPage(){
     const [checkout,setCheckout] = useState('');
     const [maxGuests , setMaxGuests] = useState(1); 
     const [redirect, setRedirect] = useState(false);
+    const [price,setPrice] = useState(100);
      
     useEffect(()=>{
         if(!id){
@@ -33,6 +34,7 @@ export default function PLacesFormPage(){
             setCheckin(data.checkin);
             setCheckout(data.checkout);
             setMaxGuests(data.maxGuests);
+            setPrice(data.price);
         })
     },[id])
 
@@ -59,18 +61,18 @@ export default function PLacesFormPage(){
         ev.preventDefault();
         const placeData = {
              title,address,addedPhotos,description
-            ,perks,extraInfo,checkin,checkout,maxGuests}
+            ,perks,extraInfo,checkin,checkout,maxGuests,price}
         if(id){
                 //updating the existing place
-                await axios.put('/places/'+id,{
+                await axios.put('/places',{
                     id,...placeData
                 });
                 setRedirect(true);
             }
         else{
-            await axios.post('/places',{
+            await axios.post('/places',
                 placeData
-            });
+            );
             setRedirect(true);
         }
     }
@@ -118,6 +120,11 @@ export default function PLacesFormPage(){
                     <div>
                         <h3>max number of guests</h3>
                         <input type="number" value={maxGuests} onChange={ev => setMaxGuests(ev.target.value)}/>
+                    </div>
+                    <div>
+                        <h3>Price per night</h3>
+                        <input type="number" value={price} onChange={ev => setPrice(ev.target.value)}/>
+
                     </div> 
                 </div>
 
