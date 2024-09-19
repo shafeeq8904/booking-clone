@@ -21,10 +21,31 @@ export default function IndividualPage(){
 
     if(showAllPhotos){
         return (
-        <div className="fixed bg-white w-full h-full overflow-y-scroll">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+        
+        <div className="fixed bg-white w-full h-full overflow-y-scroll scroll-smooth ">
+                <div className="flex justify-between items-center px-4 py-4"> 
+                    <h2 className="text-3xl font-semibold">Photos of {place.title}</h2>
+
+                    {/* Fixed button with adjusted positioning */}
+                    <button onClick={()=>{setShowAllPhotos(false)}} className="fixed top-8 right-6 flex items-center px-4 py-2 rounded-xl text-xl bg-red-400 text-gray-100 gap-2 shadow shadow-black">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="h-6 w-6"
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Close Photos
+                    </button>
+                </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 -mx-4">
+                
                 {place?.photos?.length > 0 && place.photos.map((photo, index) => (
-                <div key={index} className="w-full h-[400px]"> {/* Set height for consistency */}
+                <div key={index} className="w-full h-[400px] transition-transform duration-300 ease-in-out "> {/* Set height for consistency */}
                     <img
                     className="w-full h-full object-cover rounded-lg"
                     src={'http://localhost:3000/uploads/' + photo}
@@ -34,6 +55,7 @@ export default function IndividualPage(){
                 ))}
             </div>
         </div>
+    
     )
 }
 
@@ -42,12 +64,12 @@ export default function IndividualPage(){
             <h1 className="text-3xl">{place.title}</h1>
             <AddressLink>{place.address}</AddressLink>
             <div className="relative">
-                <div className="grid gap-2 grid-cols-[2fr_1fr]">
+                <div className="grid gap-2 grid-cols-[2fr_1fr] rounded-2xl overflow-hidden">
                     <div>
                         {place.photos?.[0] && (
                         <div>
-                            <img
-                            className="aspect-square object-cover rounded-lg "
+                            <img onClick={()=>{setShowAllPhotos(true)}}
+                            className="aspect-square cursor-pointer object-cover rounded-lg "
                             src={'http://localhost:3000/uploads/' + place.photos[0]}
                             alt="Main"
                             />
@@ -57,16 +79,16 @@ export default function IndividualPage(){
 
                 <div className="grid">
                     {place.photos?.[1] && (
-                        <img
-                        className="aspect-square object-cover rounded-lg"
+                        <img onClick={()=>{setShowAllPhotos(true)}}
+                        className="aspect-square cursor-pointer object-cover rounded-lg"
                         src={'http://localhost:3000/uploads/' + place.photos[1]}
                         alt="Thumbnail 1"
                         />
                     )}
                     <div className="overflow-hidden">
                         {place.photos?.[2] && (
-                            <img
-                            className="aspect-square object-cover rounded-lg relative top-2"
+                            <img onClick={()=>{setShowAllPhotos(true)}}
+                            className="aspect-square cursor-pointer object-cover rounded-lg relative top-2"
                             src={'http://localhost:3000/uploads/' + place.photos[2]}
                             alt="Thumbnail 2"
                             />
@@ -102,7 +124,7 @@ export default function IndividualPage(){
             <div>
                 <h2 className="font-semibold text-2xl">Extra info</h2>
             </div>
-            <div className="mb-4 mt-2 text-sm text-gray-700 leading-5">{place.extraInfo}</div>
+            <div className="mb-4 mt-2 text-sm text-gray-800 leading-5">{place.extraInfo}</div>
             </div>
         </div>
         );
