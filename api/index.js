@@ -3,7 +3,8 @@ const app = express()
 const cors= require('cors');
 const { default: mongoose } = require('mongoose');
 const User = require('./models/User');
-const Place = require('./models/Places')
+const Place = require('./models/Places');
+const Booking = require('./models/Booking')
 require('dotenv').config()
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
@@ -39,6 +40,15 @@ async function connectDB() {
 }
 
 connectDB();
+
+function getUserDataFromReq(req) {
+    return new Promise((resolve, reject) => {
+      jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
+        if (err) throw err;
+        resolve(userData);
+      });
+    });
+  }
 
 app.get('/test',(req,res)=>{
     res.json('Hello World')
@@ -182,6 +192,30 @@ app.put('/places', async(req,res)=>{
 app.get('/places', async(req,res)=>{
     res.json(await Place.find());
 })
+
+app.post('/bookings',async(req,res)=>{
+    const userData = await getUserDataFromReq(req);
+    const {place,checkin,
+        checkout,numberOfGuests,
+        name,phone,price} =req.body;
+    Booking.create({
+        place,checkin,
+        checkout,numberOfGuests,
+        name,phone,price,
+        user:userData.id
+    }).then((doc)=>{
+        
+        res.json(doc);
+    }).catch((err)=>{
+        throw err;
+    })
+        
+})
+
+app.get('/bookings', async (req,res) => {
+    const userData = await getUserDataFromReq(req);
+    res.json( await Booking.find({user:userData.id}).populate('place') );
+  });
 
 app.listen( port , ()=>{
     console.log(`Server is running on port ${port}`)
