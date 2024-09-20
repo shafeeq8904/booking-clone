@@ -31,9 +31,9 @@ export default function Register(){
 
         <div className="mt-4 grow flex items-center justify-around">
             <div className="">
-            <h1 className="text-4xl text-center mb-4">Register</h1>
+            <h1 className="text-4xl text-center mb-8">Register</h1>
 
-            <form onSubmit={register} className="max-w-xl mx-auto">
+            <form onSubmit={register} className="max-w-xl mx-auto  bg-gray-200 p-20 rounded-3xl">
                 <input type='text' 
                        placeholder='Enter you name' 
                        value={name} 

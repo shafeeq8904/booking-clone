@@ -29,8 +29,8 @@ export default function Login(){
     return (
         <div className="mt-4 grow flex items-center justify-around">
             <div className="">
-            <h1 className="text-4xl text-center mb-4">Login</h1>
-            <form className="max-w-xl mx-auto" onSubmit={handlelogin}>
+            <h1 className="text-4xl text-center mb-8">Login</h1>
+            <form className="max-w-xl mx-auto bg-gray-200 p-20 rounded-3xl" onSubmit={handlelogin}>
                 <input type='email' 
                        placeholder='your@email.com'
                        value={email}
